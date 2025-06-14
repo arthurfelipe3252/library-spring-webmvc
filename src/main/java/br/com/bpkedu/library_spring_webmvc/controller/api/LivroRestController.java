@@ -17,22 +17,53 @@ public class LivroRestController {
     @Autowired
     private LivroService livroService;
 
-//    public LivroRestController(LivroService livroService) {
-//        this.livroService = livroService;
-//    }
+    @GetMapping
+    public ResponseEntity<List<Livro>> listarLivros() {
+        List<Livro> livros = livroService.listarTodos();
+        return ResponseEntity.ok(livros);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Livro> detalharLivro(@PathVariable Long id) {
+        Livro livro = livroService.buscarPorId(id);
+        if (livro == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(livro);
+    }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Livro> atualizarLivro(@PathVariable Long id, @RequestBody Livro livro) {
+        Livro existente = livroService.buscarPorId(id);
+        if (existente == null) {
+            return ResponseEntity.notFound().build();
+        }
+        livro.setId(id);
+        Livro atualizado = livroService.salvar(livro);
+        return ResponseEntity.ok(atualizado);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarLivro(@PathVariable Long id) {
+        Livro existente = livroService.buscarPorId(id);
+        if (existente == null) {
+            return ResponseEntity.notFound().build();
+        }
+        livroService.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
 
     @GetMapping("/getAll")
-    public List<Livro> getAll(){
+    public List<Livro> getAll() {
         return livroService.listarTodos();
     }
 
-    @PostMapping()
-    public ResponseEntity<Livro> novoLivro(@RequestBody LivroDTO livroDTO){
-        Livro livro = livroDTO.toLivro(livroDTO);
-
-        Livro saved =  livroService.salvar(livro);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    @PostMapping
+    public ResponseEntity<Livro> salvarLivro(@RequestBody Livro livro) {
+        Livro salvo = livroService.salvar(livro);
+        return ResponseEntity.status(201).body(salvo);
     }
+
 
 }

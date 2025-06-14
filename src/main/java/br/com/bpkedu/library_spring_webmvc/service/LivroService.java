@@ -13,11 +13,8 @@ public class LivroService {
     @Autowired
     private LivroRepository livroRepository;
 
-
     public List<Livro> listarTodos() {
-
         List<Livro> livros = livroRepository.findAll();
-
         return livros;
     }
 
@@ -32,6 +29,5 @@ public class LivroService {
     public void deletar(Long id) {
         livroRepository.deleteById(id);
     }
-
 
 }
